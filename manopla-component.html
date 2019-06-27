@@ -1,0 +1,101 @@
+<link rel="import" href="bower_components/polymer/polymer-element.html">
+<link rel="import" href="bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+
+<dom-module id="manopla-component">
+  <template>
+    <style>
+      paper-input {
+        --paper-input-container-shared-input-style: {
+          background-color: black;
+          font-size: 40px;
+        };
+      }
+    </style>
+    <h4>[[title]]</h4>
+    <section id="login" role="form">
+      <section class="inputs">
+        <h3>[[subtitle]]</h3>
+        <input id="user" placeholder="user" type="text">
+        <input id="password" placeholder="password" type="password">
+        alsdajsjajklsjlk
+        <paper-input></paper-input>
+        <dom-if if="[[!_validateView(status)]]">
+          <template>
+            <input id="confirm" placeholder="confirm password" type="password">
+          </template>
+        </dom-if>
+      </section>
+      <section id="[[title]]" class$="[[_updateStyles]]">
+        <dom-if if="[[_validateView(status)]]">
+          <template>
+            <button on-click="_doLogin">Login</button>
+          </template>
+        </dom-if>
+        <dom-if if="[[!_validateView(status)]]">
+          <template>
+            <button on-click="_doRegister">Register</button>
+          </template>
+        </dom-if>
+      </section>
+    </section>
+  </template>
+  <script>
+    class ManoplaComponent extends Polymer.Element {
+      static get is() {
+        return 'manopla-component';
+      }
+      static get properties() {
+        return {
+          title: {
+            type: String,
+            value: 'Register'
+          },
+          subtitle: {
+            type: String,
+            value: ''
+          },
+          status: {
+            type: Number,
+            value: 1 // 0: register || 1: login
+          },
+          user: {
+            type: Object,
+            value: {}
+          }
+        };
+      }
+      connectedCallback() {
+        super.connectedCallback();
+      }
+      _validateView(status) {
+        return status === 0;
+      }
+      _doRegister() {
+        const user = this.shadowRoot.querySelector('#user').value;
+        const pass = this.shadowRoot.querySelector('#password').value;
+        const confirm = this.shadowRoot.querySelector('#confirm').value;
+        if(pass === confirm) {
+          this.status = 0;
+          this.title = this.status === 0 ? 'Login' : 'Register';
+          this.set('user', {
+            userName: user,
+            password: pass
+          });
+          this.shadowRoot.querySelector('#user').value = '';
+          this.shadowRoot.querySelector('#password').value = '';
+        }
+      }
+      _doLogin() {
+        const user = this.shadowRoot.querySelector('#user').value;
+        const pass = this.shadowRoot.querySelector('#password').value;
+        if(user === this.user.userName && pass === this.user.password) {
+          alert('Login Success');
+          return;
+        }
+        alert('Login Error');
+      }
+    }
+    customElements.define('manopla-component', ManoplaComponent);
+  </script>
+</dom-module>

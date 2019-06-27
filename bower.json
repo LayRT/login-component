@@ -1,0 +1,26 @@
+{
+  "name": "manopla-component",
+  "authors": [
+    "aldo.aldaco.contreras <aldo.aldaco.contreras.next@bbva.com>"
+  ],
+  "description": "Componente a mano",
+  "main": "index.html",
+  "keywords": [
+    "webcomponent",
+    "polymer"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "^2.0.0",
+    "paper-checkbox": "git@github.com:PolymerElements/paper-checkbox.git#^2.0.0",
+    "paper-input": "^2.0.0"
+  }
+}
