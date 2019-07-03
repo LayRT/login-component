@@ -103,11 +103,11 @@
           status: {
             type: Number,
             value: 1 // 0: register || 1: login
-          },
-          user: {
+          }
+          /*user: {
             type: Object,
             value: {}
-          }
+          }*/
         };
       }
       connectedCallback() {
@@ -123,10 +123,6 @@
         if(pass === confirmpass) {
           this.status = 0;
           this.title = this.status === 0 ? 'Login' : 'Register';
-          this.set('user', {
-            userName: user,
-            password: pass
-          });
           this.shadowRoot.querySelector('#user').value = '';
           this.shadowRoot.querySelector('#password').value = '';
           this.dispatchEvent(new CustomEvent('register-event',{
