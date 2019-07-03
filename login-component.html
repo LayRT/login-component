@@ -1,25 +1,70 @@
 <link rel="import" href="bower_components/polymer/polymer-element.html">
 <link rel="import" href="bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="bower_components/paper-input/paper-input.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
 
-<dom-module id="manopla-component">
+<dom-module id="login-component">
   <template>
     <style>
-      paper-input {
-        --paper-input-container-shared-input-style: {
-          background-color: black;
+      paper-button {
+        background: #00004d;
+        color: white;
+        border-radius: 15px;
+        font-size: 15px;
+        outline: none;
+        }
+
+      #form{
+          background: #000099;
+      }
+
+      #form p{
+          margin: 0;
+          padding: 0;
+          font-weight: bold;
+          color: white;
+      }
+
+      h1{
+        margin: 0;
+        padding: 0 0 20 px;
+        text-align: center;
+        color: white;
+      }
+
+      paper-button:hover{
+          cursor: pointer;
+          background: blue ;
+      }
+
+      .inputs input[type="text"], input[type="password"]{
+        border: none;
+        border-bottom: 1px solid #fff;
+        background: transparent;
+        outline: none;
+        height: 40px;
+        font-size: 16px;
+        color: white;
+      }
+        paper-input {
+          width: 100%;
+          margin-bottom: 20px;
+          background-color: white;
           font-size: 40px;
+          border: none;
+          color: white
         };
       }
     </style>
-    <h4>[[title]]</h4>
+  <section id="form">
+    <h1>[[title]]</h1>
     <section id="login" role="form">
       <section class="inputs">
-        <h3>[[subtitle]]</h3>
+        <h1>[[subtitle]]</h1>
+        <p>Username</p>
         <input id="user" placeholder="user" type="text">
+        <p>Password</p>
         <input id="password" placeholder="password" type="password">
-        alsdajsjajklsjlk
-        <paper-input></paper-input>
         <dom-if if="[[!_validateView(status)]]">
           <template>
             <input id="confirm" placeholder="confirm password" type="password">
@@ -29,21 +74,21 @@
       <section id="[[title]]" class$="[[_updateStyles]]">
         <dom-if if="[[_validateView(status)]]">
           <template>
-            <button on-click="_doLogin">Login</button>
+           <paper-button on-click="_Login" raised class="_Login">LogIn</paper-button>
           </template>
         </dom-if>
         <dom-if if="[[!_validateView(status)]]">
           <template>
-            <button on-click="_doRegister">Register</button>
+           <paper-button on-click="_Register" raised class="_Register">Register</paper-button>
           </template>
         </dom-if>
       </section>
     </section>
   </template>
   <script>
-    class ManoplaComponent extends Polymer.Element {
+    class LoginComponent extends Polymer.Element {
       static get is() {
-        return 'manopla-component';
+        return 'login-component';
       }
       static get properties() {
         return {
@@ -71,11 +116,11 @@
       _validateView(status) {
         return status === 0;
       }
-      _doRegister() {
+      _Register() {
         const user = this.shadowRoot.querySelector('#user').value;
         const pass = this.shadowRoot.querySelector('#password').value;
-        const confirm = this.shadowRoot.querySelector('#confirm').value;
-        if(pass === confirm) {
+        const confirmpass = this.shadowRoot.querySelector('#confirm').value;
+        if(pass === confirmpass) {
           this.status = 0;
           this.title = this.status === 0 ? 'Login' : 'Register';
           this.set('user', {
@@ -84,18 +129,34 @@
           });
           this.shadowRoot.querySelector('#user').value = '';
           this.shadowRoot.querySelector('#password').value = '';
+          this.dispatchEvent(new CustomEvent('register-event',{
+            detail:{
+              username: user,
+              password: pass
+            },
+            bubbles: true,
+            composed: true
+          }));
         }
       }
-      _doLogin() {
+      _Login() {
         const user = this.shadowRoot.querySelector('#user').value;
         const pass = this.shadowRoot.querySelector('#password').value;
         if(user === this.user.userName && pass === this.user.password) {
           alert('Login Success');
           return;
         }
-        alert('Login Error');
+        this.dispatchEvent(new CustomEvent('login-event',{
+          detail:{
+            username: user,
+            password: pass
+          },
+          bubbles: true,
+          composed: true
+        }));
+        alert('Login Error, your user or password are incorrect');
       }
     }
-    customElements.define('manopla-component', ManoplaComponent);
+    customElements.define('login-component', LoginComponent);
   </script>
 </dom-module>
