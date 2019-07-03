@@ -142,10 +142,6 @@
       _Login() {
         const user = this.shadowRoot.querySelector('#user').value;
         const pass = this.shadowRoot.querySelector('#password').value;
-        if(user === this.user.userName && pass === this.user.password) {
-          alert('Login Success');
-          return;
-        }
         this.dispatchEvent(new CustomEvent('login-event',{
           detail:{
             username: user,
@@ -154,7 +150,6 @@
           bubbles: true,
           composed: true
         }));
-        alert('Login Error, your user or password are incorrect');
       }
     }
     customElements.define('login-component', LoginComponent);
