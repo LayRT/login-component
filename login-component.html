@@ -2,27 +2,54 @@
 <link rel="import" href="bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="bower_components/paper-input/paper-input.html">
 <link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/paper-password-input/paper-password-input.html">
+<link rel="import" href="bower_components/paper-password-input/min-length-validator.html">
+<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 
 <dom-module id="login-component">
   <template>
     <style>
+
+      #loginbox{
+        width: 320 px;
+        height:420 px;
+        background:#00004d;
+        color:#fff;
+        top:50%;
+        left: 50%;
+        position: absolute;
+        transform: translate(-50%, -50%);
+        box-sizing:border-box;
+        padding: 70px 30px;
+      }
+
+      .avatar{
+        width: 100px;
+        height:100px;
+        border-radius: 50%;
+        position: absolute;
+        top: -50px;
+        left: calc(50% - 50px);
+      }
+
+
       paper-button {
-        background: #00004d;
+        background: #000099;
         color: white;
         border-radius: 15px;
         font-size: 15px;
-        outline: none;
-        }
+        margin: 60px;
 
-      #form{
-          background: #000099;
-      }
+        }
 
       #form p{
           margin: 0;
           padding: 0;
           font-weight: bold;
           color: white;
+          font-family: 'Roboto', sans-serif;
       }
 
       h1{
@@ -30,6 +57,7 @@
         padding: 0 0 20 px;
         text-align: center;
         color: white;
+        font-family: 'Roboto', sans-serif;
       }
 
       paper-button:hover{
@@ -39,6 +67,7 @@
 
       .inputs input[type="text"], input[type="password"]{
         border: none;
+        font-family: 'Roboto', sans-serif;
         border-bottom: 1px solid #fff;
         background: transparent;
         outline: none;
@@ -46,28 +75,66 @@
         font-size: 16px;
         color: white;
       }
+
+        paper-password-input.password{
+          color: white;
+          font-family: 'Roboto', sans-serif;
+
+        }
+
+        #login{
+          color: white;
+          font-family: 'Roboto', sans-serif;
+        }
+
+        .incorrect p{
+          color: red;
+        }
+
         paper-input {
           width: 100%;
           margin-bottom: 20px;
           background-color: white;
           font-size: 40px;
           border: none;
-          color: white
+          color: white;
+        
+
+
         };
       }
     </style>
-  <section id="form">
+
+
+  <section id="loginbox">
+    <img src = "peopleicon.png" class="avatar">
     <h1>[[title]]</h1>
-    <section id="login" role="form">
+  <section id="login" role="form">
       <section class="inputs">
         <h1>[[subtitle]]</h1>
         <p>Username</p>
         <input id="user" placeholder="user" type="text">
         <p>Password</p>
-        <input id="password" placeholder="password" type="password">
+        <min-length-validator id ="min-length-validator" min-length="6"></min-length-validator>
+        <paper-password-input
+            id = "password"
+            label= "password"
+            placeholder="password"
+            auto-validate
+            validator="min-length-validator"
+            error-message = "Enter at least 6 characters">
+        </paper-password-input>
         <dom-if if="[[!_validateView(status)]]">
           <template>
-            <input id="confirm" placeholder="confirm password" type="password">
+            <min-length-validator id ="min-length-validator" min-length="6"></min-length-validator>
+            <paper-password-input
+                id = "confirm"
+                label="Confirm password"
+                auto-validate
+                validator="min-length-validator"
+                error-message = "Enter at least 6 characters">
+            </paper-password-input>
+          <!--  <input id="confirm" placeholder="confirm password" type="password"> -->
           </template>
         </dom-if>
       </section>
@@ -75,6 +142,11 @@
         <dom-if if="[[_validateView(status)]]">
           <template>
            <paper-button on-click="_Login" raised class="_Login">LogIn</paper-button>
+           <dom-if if="[[badlogin]]"><template id="incorrect" >
+             <section class = "incorrect">
+                    <p>The user or the pasword are incorrect!</p>
+             </section>
+           </template></dom-if>
           </template>
         </dom-if>
         <dom-if if="[[!_validateView(status)]]">
@@ -103,11 +175,12 @@
           status: {
             type: Number,
             value: 1 // 0: register || 1: login
+          },
+
+          badlogin:{
+            type: Boolean,
+            value: false
           }
-          /*user: {
-            type: Object,
-            value: {}
-          }*/
         };
       }
       connectedCallback() {
@@ -117,24 +190,30 @@
         return status === 0;
       }
       _Register() {
-        const user = this.shadowRoot.querySelector('#user').value;
-        const pass = this.shadowRoot.querySelector('#password').value;
-        const confirmpass = this.shadowRoot.querySelector('#confirm').value;
-        if(pass === confirmpass) {
-          this.status = 0;
-          this.title = this.status === 0 ? 'Login' : 'Register';
-          this.shadowRoot.querySelector('#user').value = '';
-          this.shadowRoot.querySelector('#password').value = '';
-          this.dispatchEvent(new CustomEvent('register-event',{
-            detail:{
-              username: user,
-              password: pass
-            },
-            bubbles: true,
-            composed: true
-          }));
-        }
-      }
+       const user = this.shadowRoot.querySelector('#user').value;
+       const pass = this.shadowRoot.querySelector('#password').value;
+       const confirmpass = this.shadowRoot.querySelector('#confirm').value;
+       if(pass === confirmpass) {
+         this.status = 0;
+         this.title = this.status === 0 ? 'Login' : 'Register';
+         this.shadowRoot.querySelector('#user').value = '';
+         this.shadowRoot.querySelector('#password').value = '';
+         this.bad_login = false;
+         this.dispatchEvent(new CustomEvent('register-event',{
+           detail:{
+             username: user,
+             password: pass
+           },
+           bubbles: true,
+           composed: true
+         }));
+       } else {
+           console.log(this.bad_login);
+           this.bad_login  =  true;
+           console.log(this.bad_login);
+       }
+     }
+
       _Login() {
         const user = this.shadowRoot.querySelector('#user').value;
         const pass = this.shadowRoot.querySelector('#password').value;
